@@ -1,0 +1,5 @@
+#!/bin/bash
+cmd/build/add_commit
+cmd/build/copy-files
+cmd/build/make-and-uglify
+cmd/build/minify

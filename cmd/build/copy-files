@@ -1,0 +1,13 @@
+#!/bin/bash
+build_folder="build"
+rm -rf $build_folder
+mkdir $build_folder
+mkdir $build_folder/js
+cp docs/robots.txt  $build_folder
+cp docs/favicon.ico $build_folder
+cp docs/index.html $build_folder
+cp -r docs/images $build_folder/
+cp -r docs/api-tests $build_folder/
+cp -r docs/fonts $build_folder/
+cp -r docs/js-config $build_folder/
+cp -r docs/css $build_folder/

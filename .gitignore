@@ -1,0 +1,22 @@
+# Distribution
+/deployments/
+/build/
+/temp/
+
+# Compiled files
+js-compiled
+
+# Dependency directories
+elm-stuff
+node_modules
+
+# Desktop Services Store on macOS
+.DS_Store
+
+# IDE settings
+.vscode/
+.idea/
+omni-front-end.iml
+
+# Others
+docs/js-development/commit.js

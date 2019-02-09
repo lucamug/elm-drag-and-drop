@@ -1,0 +1,4 @@
+#!/bin/bash
+printf "\n\e[0;32m🍣   Starting \"elm-live\"...\e[0m\n\n"
+rm -rf docs/js-compiled
+elm-live --output=docs/js-compiled/widget-idlite.js src/WidgetIdLite/Main.elm --dir=docs --debug --port=8001

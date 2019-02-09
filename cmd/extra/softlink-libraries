@@ -1,0 +1,13 @@
+#!/bin/bash
+ls -l node_modules/@com.rakuten.esd
+
+cd node_modules/@com.rakuten.esd
+rm -rf elm-challenger
+ln -s ../../../elm-challenger
+
+cd node_modules/@com.rakuten.esd
+rm -rf elm-style-framework-rakuten
+ln -s ../../../elm-style-framework-rakuten
+
+cd ../..
+ls -l node_modules/@com.rakuten.esd

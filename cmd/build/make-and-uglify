@@ -1,0 +1,21 @@
+#!/bin/bash
+build_folder="build"
+printf "\n\e[0;32m🍣   Compiling optimized version...\e[0m\n\n"
+rm -rf temp
+node_modules/.bin/elm make --output=temp/main.js                src/Main.elm                    --optimize
+node_modules/.bin/elm make --output=temp/widget-idlite.js       src/WidgetIdLite/Main.elm       --optimize
+node_modules/.bin/elm make --output=temp/widget-login.js        src/WidgetLogin/Main.elm        --optimize
+node_modules/.bin/elm make --output=temp/widget-tac.js          src/WidgetTac/Main.elm          --optimize
+node_modules/.bin/elm make --output=temp/widget-registration.js src/WidgetRegistration/Main.elm --optimize
+node_modules/.bin/elm make --output=temp/widget-combined.js src/WidgetIdLite/Main.elm src/WidgetLogin/Main.elm src/WidgetTac/Main.elm src/WidgetRegistration/Main.elm --optimize
+printf "\n\e[0;32m🍺   Done\e[0m\n"
+printf "\n\e[0;32m🍣   Uglifying...\e[0m\n\n"
+
+node_modules/.bin/uglifyjs temp/main.js                docs/js-development/commit.js docs/js-development/version.js docs/js-development/fingerPrint.v.0.0.6.js docs/js-development/solvePow.v.0.0.1.js docs/js-development/cookie.js docs/js-development/starter-helper.js docs/js-development/start-main.js          --compress 'pure_funcs="F2,F3,F4,F5,F6,F7,F8,F9,A2,A3,A4,A5,A6,A7,A8,A9",pure_getters,keep_fargs=false,unsafe_comps,unsafe' | node_modules/.bin/uglifyjs --mangle --output=$build_folder/js/main.js
+node_modules/.bin/uglifyjs temp/widget-idlite.js       docs/js-development/commit.js docs/js-development/version.js docs/js-development/fingerPrint.v.0.0.6.js docs/js-development/solvePow.v.0.0.1.js docs/js-development/cookie.js docs/js-development/starter-helper.js docs/js-development/start-widget-idlite.js --compress 'pure_funcs="F2,F3,F4,F5,F6,F7,F8,F9,A2,A3,A4,A5,A6,A7,A8,A9",pure_getters,keep_fargs=false,unsafe_comps,unsafe' | node_modules/.bin/uglifyjs --mangle --output=$build_folder/js/widget-idlite.js
+node_modules/.bin/uglifyjs temp/widget-login.js        docs/js-development/commit.js docs/js-development/version.js docs/js-development/fingerPrint.v.0.0.6.js docs/js-development/solvePow.v.0.0.1.js docs/js-development/cookie.js docs/js-development/starter-helper.js docs/js-development/start-widget-login.js  --compress 'pure_funcs="F2,F3,F4,F5,F6,F7,F8,F9,A2,A3,A4,A5,A6,A7,A8,A9",pure_getters,keep_fargs=false,unsafe_comps,unsafe' | node_modules/.bin/uglifyjs --mangle --output=$build_folder/js/widget-login.js
+node_modules/.bin/uglifyjs temp/widget-tac.js          docs/js-development/commit.js docs/js-development/version.js docs/js-development/fingerPrint.v.0.0.6.js docs/js-development/solvePow.v.0.0.1.js docs/js-development/cookie.js docs/js-development/starter-helper.js docs/js-development/start-widget-tac.js    --compress 'pure_funcs="F2,F3,F4,F5,F6,F7,F8,F9,A2,A3,A4,A5,A6,A7,A8,A9",pure_getters,keep_fargs=false,unsafe_comps,unsafe' | node_modules/.bin/uglifyjs --mangle --output=$build_folder/js/widget-tac.js
+node_modules/.bin/uglifyjs temp/widget-registration.js docs/js-development/commit.js docs/js-development/version.js docs/js-development/fingerPrint.v.0.0.6.js docs/js-development/solvePow.v.0.0.1.js docs/js-development/cookie.js docs/js-development/starter-helper.js docs/js-development/start-widget-registration.js    --compress 'pure_funcs="F2,F3,F4,F5,F6,F7,F8,F9,A2,A3,A4,A5,A6,A7,A8,A9",pure_getters,keep_fargs=false,unsafe_comps,unsafe' | node_modules/.bin/uglifyjs --mangle --output=$build_folder/js/widget-registration.js
+
+node_modules/.bin/uglifyjs temp/widget-combined.js docs/js-development/commit.js docs/js-development/version.js docs/js-development/fingerPrint.v.0.0.6.js docs/js-development/solvePow.v.0.0.1.js docs/js-development/cookie.js docs/js-development/starter-helper.js docs/js-development/start-widget-login.js docs/js-development/start-widget-idlite.js docs/js-development/start-widget-tac.js docs/js-development/start-widget-registration.js --compress 'pure_funcs="F2,F3,F4,F5,F6,F7,F8,F9,A2,A3,A4,A5,A6,A7,A8,A9",pure_getters,keep_fargs=false,unsafe_comps,unsafe' | node_modules/.bin/uglifyjs --mangle --output=$build_folder/js/widget-combined.js
+printf "\n\e[0;32m🍺   Done\e[0m\n"

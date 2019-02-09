@@ -1,0 +1,41 @@
+#!/bin/bash
+build_folder="build"
+printf "\n\e[0;32m🍣   Copying to temp...\e[0m\n\n"
+rm -rf temp
+mkdir temp
+cp docs/omnir-local-combined.html      temp/temp1.html
+cp docs/omnir-local-main.html          temp/temp2.html
+cp docs/omnir-local-singles.html       temp/temp3.html
+cp docs/omnir-beta-combined.html       temp/temp4.html
+cp docs/omnir-devrc-combined.html      temp/temp5.html
+cp docs/omnir-production-combined.html temp/temp6.html
+cp docs/omnir-qa-combined.html         temp/temp7.html
+cp docs/omnir-stg-combined.html        temp/temp8.html
+printf "\n\e[0;32m🍣   Removing development scripts ...\e[0m\n\n"
+node_modules/.bin/replace '(<script class="dev-only".*</script>)' '<!-- $1 -->' temp/temp1.html -m -i
+node_modules/.bin/replace '(<script class="dev-only".*</script>)' '<!-- $1 -->' temp/temp2.html -m -i
+node_modules/.bin/replace '(<script class="dev-only".*</script>)' '<!-- $1 -->' temp/temp3.html -m -i
+node_modules/.bin/replace '(<script class="dev-only".*</script>)' '<!-- $1 -->' temp/temp4.html -m -i
+node_modules/.bin/replace '(<script class="dev-only".*</script>)' '<!-- $1 -->' temp/temp5.html -m -i
+node_modules/.bin/replace '(<script class="dev-only".*</script>)' '<!-- $1 -->' temp/temp6.html -m -i
+node_modules/.bin/replace '(<script class="dev-only".*</script>)' '<!-- $1 -->' temp/temp7.html -m -i
+node_modules/.bin/replace '(<script class="dev-only".*</script>)' '<!-- $1 -->' temp/temp8.html -m -i
+printf "\n\e[0;32m🍣   Adding production scripts ...\e[0m\n\n"
+node_modules/.bin/replace '<!-- prod-only (.*) -->' '$1' temp/temp1.html -m -i
+node_modules/.bin/replace '<!-- prod-only (.*) -->' '$1' temp/temp2.html -m -i
+node_modules/.bin/replace '<!-- prod-only (.*) -->' '$1' temp/temp3.html -m -i
+node_modules/.bin/replace '<!-- prod-only (.*) -->' '$1' temp/temp4.html -m -i
+node_modules/.bin/replace '<!-- prod-only (.*) -->' '$1' temp/temp5.html -m -i
+node_modules/.bin/replace '<!-- prod-only (.*) -->' '$1' temp/temp6.html -m -i
+node_modules/.bin/replace '<!-- prod-only (.*) -->' '$1' temp/temp7.html -m -i
+node_modules/.bin/replace '<!-- prod-only (.*) -->' '$1' temp/temp8.html -m -i
+printf "\n\e[0;32m🍣   Minifing temp.html ...\e[0m\n\n"
+node_modules/.bin/html-minifier -o $build_folder/omnir-local-combined.html      temp/temp1.html --minify-css --minify-js --collapse-whitespace --remove-comments
+node_modules/.bin/html-minifier -o $build_folder/omnir-local-main.html          temp/temp2.html --minify-css --minify-js --collapse-whitespace --remove-comments
+node_modules/.bin/html-minifier -o $build_folder/omnir-local-singles.html       temp/temp3.html --minify-css --minify-js --collapse-whitespace --remove-comments
+node_modules/.bin/html-minifier -o $build_folder/omnir-beta-combined.html       temp/temp4.html --minify-css --minify-js --collapse-whitespace --remove-comments
+node_modules/.bin/html-minifier -o $build_folder/omnir-devrc-combined.html      temp/temp4.html --minify-css --minify-js --collapse-whitespace --remove-comments
+node_modules/.bin/html-minifier -o $build_folder/omnir-production-combined.html temp/temp6.html --minify-css --minify-js --collapse-whitespace --remove-comments
+node_modules/.bin/html-minifier -o $build_folder/omnir-qa-combined.html         temp/temp7.html --minify-css --minify-js --collapse-whitespace --remove-comments
+node_modules/.bin/html-minifier -o $build_folder/omnir-stg-combined.html        temp/temp8.html --minify-css --minify-js --collapse-whitespace --remove-comments
+printf "Done\n"
