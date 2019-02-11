@@ -1,3 +1,3 @@
 #!/bin/bash
 printf "\n\e[0;32m🍣   Starting elm-live...\e[0m\n\n"
-node_modules/.bin/elm-live src/Main.elm --before-build=cmd/build/add_commit --open=true --dir=docs --port=8002 --path-to-elm=node_modules/.bin/elm -- --output=docs/js-compiled/main.js --debug
+node_modules/.bin/elm-live src/Main.elm --open=true --dir=docs --port=8002 --path-to-elm=node_modules/.bin/elm -- --output=docs/js-compiled/main.js
