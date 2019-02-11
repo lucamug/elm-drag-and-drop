@@ -20,72 +20,22 @@ debug =
     False
 
 
-type alias Point =
-    ( Int, Int, String )
-
-
-componentToPoints : { c | id : a, size : { b | x : Int, y : Int } } -> List ( Int, Int, a )
-componentToPoints { id, size } =
+deconstructComponent : Int -> Int -> List ( Int, Int )
+deconstructComponent sizeX sizeY =
     List.concat <|
         List.indexedMap
             (\indexX _ ->
-                List.indexedMap (\indexY _ -> ( indexX, indexY, id )) (List.repeat size.y ())
+                List.indexedMap (\indexY _ -> ( indexX, indexY )) (List.repeat sizeY ())
             )
-            (List.repeat size.x ())
+            (List.repeat sizeX ())
 
 
-movePoints : { c | position : { b | x : Int, y : Int } } -> List Point -> List Point
-movePoints { position } deco =
-    List.map (\( x_, y_, id ) -> ( x_ + position.x, y_ + position.y, id )) deco
+moveDecontruction { sizeX, sizeY, deltaX, deltaY } =
+    List.map (\( x, y ) -> ( x + deltaX, y + deltaY )) (deconstructComponent sizeX sizeY)
 
 
-type alias Matrix =
-    Array.Array (Array.Array String)
-
-
-matrixEmpty : Matrix
-matrixEmpty =
-    Array.repeat dimensionDefault.x (Array.repeat dimensionDefault.y "  ")
-
-
-addPointToMatrix : Point -> Matrix -> Matrix
-addPointToMatrix ( x, y, id ) matrix =
-    let
-        maybeRow =
-            Array.get y matrix
-    in
-    case maybeRow of
-        Just row ->
-            let
-                newRow =
-                    Array.set x id row
-            in
-            Array.set y newRow matrix
-
-        Nothing ->
-            matrix
-
-
-addPointsToMatrix : Matrix -> List Point -> Matrix
-addPointsToMatrix matrix points =
-    List.foldl addPointToMatrix matrix points
-
-
-addComponentToMatrix : { a | id : String, position : Position, size : Size } -> Matrix -> Matrix
-addComponentToMatrix { id, position, size } matrix =
-    { id = id, size = size }
-        |> componentToPoints
-        |> movePoints { position = position }
-        |> addPointsToMatrix matrix
-
-
-addComponentsToMatrix : Matrix -> List { a | id : String, position : Position, size : Size } -> Matrix
-addComponentsToMatrix matrix components =
-    List.foldl addComponentToMatrix matrix components
-
-
-viewTest : Model -> Element Msg
-viewTest model =
+viewTest : Element msg
+viewTest =
     {- TODO
        This function should cover all empty areas automatically
 
@@ -112,64 +62,30 @@ viewTest model =
            add this list into the matrix
     -}
     let
-        component1 =
-            { id = "1"
-            , position = { x = 1, y = 1 }
-            , size = { x = 3, y = 1 }
-            }
+        matrix =
+            Array.repeat 5 (Array.repeat 5 "")
 
-        component2 =
-            { id = "2"
-            , position = { x = 0, y = 0 }
+        component1 =
+            { position = { x = 2, y = 3 }
             , size = { x = 1, y = 2 }
             }
-
-        normalizedComponents =
-            List.map
-                (\component ->
-                    let
-                        position =
-                            { x = component.position.x // sizeCell
-                            , y = component.position.y // sizeCell
-                            }
-                    in
-                    { component | position = position }
-                )
-                (List.filter (\component -> component.location == Dashboard) model.components)
-
-        matrix =
-            addComponentsToMatrix matrixEmpty normalizedComponents
     in
     column [ padding 30 ]
-        [ column [ spacing 5 ] <|
-            List.map
-                (\row_ ->
-                    row [ spacing 5 ] <|
-                        List.map
-                            (\cell ->
-                                el
-                                    [ width <| px 100
-                                    , height <| px 35
-                                    , Background.color <| rgb 0.8 0.8 0.8
-                                    ]
-                                <|
-                                    el [ centerX, centerY ] <|
-                                        text cell
-                            )
-                            (Array.toList row_)
-                )
-                (Array.toList matrix)
+        [ text "test"
+        , paragraph [] [ text <| Debug.toString matrix ]
+        , paragraph [] [ text <| Debug.toString <| deconstructComponent 1 2 ]
+        , paragraph [] [ text <| Debug.toString <| moveDecontruction 2 3 ]
         ]
 
 
-sizeCell : Int
-sizeCell =
+sizeDefault : Int
+sizeDefault =
     100
 
 
-npos : Int -> Int
+npos : Int -> Float
 npos pos =
-    pos * sizeCell
+    toFloat <| pos * sizeDefault
 
 
 dimensionDefault : Size
@@ -188,8 +104,8 @@ labelEmpty =
 
 
 type alias Position =
-    { x : Int
-    , y : Int
+    { x : Float
+    , y : Float
     }
 
 
@@ -333,7 +249,7 @@ init _ =
 
 positionToId : String -> Position -> ID
 positionToId label { x, y } =
-    label ++ "_" ++ String.fromInt x ++ "_" ++ String.fromInt y
+    label ++ "_" ++ String.fromFloat x ++ "_" ++ String.fromFloat y
 
 
 idToPosition : String -> ID -> Maybe Position
@@ -358,7 +274,7 @@ idToPosition label id =
                     Just x_ ->
                         case String.toFloat y of
                             Just y_ ->
-                                Just <| Position (round x_) (round y_)
+                                Just <| Position x_ y_
 
                             Nothing ->
                                 Nothing
@@ -472,8 +388,8 @@ update msg model =
                                     if component.id == draggingComponent.id then
                                         { component
                                             | position =
-                                                { x = component.position.x + round dx
-                                                , y = component.position.y + round dy
+                                                { x = component.position.x + dx
+                                                , y = component.position.y + dy
                                                 }
                                         }
 
@@ -699,16 +615,16 @@ getOverlay model =
 
 attrsSize : Component -> List (Attribute Msg)
 attrsSize component =
-    [ width <| px <| component.size.x * sizeCell
-    , height <| px <| component.size.y * sizeCell
+    [ width <| px <| component.size.x * sizeDefault
+    , height <| px <| component.size.y * sizeDefault
     , Border.width borderWidthDefault
     ]
 
 
 attrsPosition : Component -> List (Attribute Msg)
 attrsPosition component =
-    [ moveRight <| toFloat component.position.x
-    , moveDown <| toFloat component.position.y
+    [ moveRight <| component.position.x
+    , moveDown <| component.position.y
     ]
 
 
@@ -729,8 +645,8 @@ viewComponentInMenu model id =
             isComponentDragging model id
     in
     el
-        [ width <| px <| component.size.x * sizeCell
-        , height <| px <| component.size.y * sizeCell
+        [ width <| px <| component.size.x * sizeDefault
+        , height <| px <| component.size.y * sizeDefault
         , Border.width 0
         , htmlAttribute <| Html.Attributes.style "cursor" "grab"
         , htmlAttribute <| Html.Attributes.style "transition" "transform 0.05s, opacity 0.3s ease"
@@ -742,9 +658,9 @@ viewComponentInMenu model id =
         , htmlAttribute <|
             Html.Attributes.style "transform" <|
                 "translate("
-                    ++ String.fromInt component.position.x
+                    ++ String.fromFloat component.position.x
                     ++ "px, "
-                    ++ String.fromInt component.position.y
+                    ++ String.fromFloat component.position.y
                     ++ "px)"
 
         -- Conditional attributes
@@ -799,9 +715,9 @@ viewComponentInDashboard model component =
                    , htmlAttribute <|
                         Html.Attributes.style "transform" <|
                             "translate("
-                                ++ String.fromInt component.position.x
+                                ++ String.fromFloat component.position.x
                                 ++ "px, "
-                                ++ String.fromInt component.position.y
+                                ++ String.fromFloat component.position.y
                                 ++ "px)"
 
                    -- Conditional attributes
@@ -930,21 +846,20 @@ view model =
             [ centerX
             , centerY
             ]
-            [ if debug then
+            [ viewTest
+            , if debug then
                 column
                     [ spacing 5
                     , paddingXY 0 10
                     , Font.size 13
                     , padding 10
-                    , width <| px 740
-
-                    --, height <| px 120
+                    , width <| px 500
+                    , height <| px 120
                     , Border.width 1
                     , scrollbarY
                     , scrollbarX
                     ]
-                    [ viewTest model
-                    , el [] <| text <| "· draggedComponent: " ++ Debug.toString model.draggedComponent
+                    [ el [] <| text <| "· draggedComponent: " ++ Debug.toString model.draggedComponent
                     , el [] <| text <| "· isMouseUp: " ++ Debug.toString model.isMouseUp
                     , el [] <| text <| "· dragStartPosition: " ++ Debug.toString model.dragStartPosition
                     , el [] <| text <| "· drag: " ++ Debug.toString model.drag
@@ -1006,8 +921,8 @@ view model =
                     ]
                   <|
                     column
-                        ([ width <| px <| dimensionDefault.x * sizeCell
-                         , height <| px <| dimensionDefault.y * sizeCell
+                        ([ width <| px <| dimensionDefault.x * sizeDefault
+                         , height <| px <| dimensionDefault.y * sizeDefault
                          , alignTop
                          ]
                             ++ List.map (\component -> viewComponentInDashboard model component) (List.filter (\c -> c.location == Dashboard) model.components)
