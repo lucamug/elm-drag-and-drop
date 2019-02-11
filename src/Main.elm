@@ -17,14 +17,44 @@ import Time
 
 debug : Bool
 debug =
-    False
+    True
+
+
+
+{-
+   ███    ███  █████  ████████ ██████  ██ ██   ██
+   ████  ████ ██   ██    ██    ██   ██ ██  ██ ██
+   ██ ████ ██ ███████    ██    ██████  ██   ███
+   ██  ██  ██ ██   ██    ██    ██   ██ ██  ██ ██
+   ██      ██ ██   ██    ██    ██   ██ ██ ██   ██
+-}
+
+
+type alias Matrix =
+    Array.Array (Array.Array String)
+
+
+matrixEmpty : Settings -> Matrix
+matrixEmpty settings =
+    Array.repeat settings.sizeDashboard.x (Array.repeat settings.sizeDashboard.y "")
 
 
 type alias Point =
     ( Int, Int, String )
 
 
-componentToPoints : { c | id : a, size : { b | x : Int, y : Int } } -> List ( Int, Int, a )
+normalizePosition : Settings -> { a | position : Position } -> { a | position : Position }
+normalizePosition settings component =
+    let
+        position =
+            { x = component.position.x // settings.sizeCell
+            , y = component.position.y // settings.sizeCell
+            }
+    in
+    { component | position = position }
+
+
+componentToPoints : { a | id : ID, size : Size } -> List Point
 componentToPoints { id, size } =
     List.concat <|
         List.indexedMap
@@ -34,18 +64,9 @@ componentToPoints { id, size } =
             (List.repeat size.x ())
 
 
-movePoints : { c | position : { b | x : Int, y : Int } } -> List Point -> List Point
+movePoints : { a | position : Position } -> List Point -> List Point
 movePoints { position } deco =
     List.map (\( x_, y_, id ) -> ( x_ + position.x, y_ + position.y, id )) deco
-
-
-type alias Matrix =
-    Array.Array (Array.Array String)
-
-
-matrixEmpty : Matrix
-matrixEmpty =
-    Array.repeat dimensionDefault.x (Array.repeat dimensionDefault.y "  ")
 
 
 addPointToMatrix : Point -> Matrix -> Matrix
@@ -71,74 +92,24 @@ addPointsToMatrix matrix points =
     List.foldl addPointToMatrix matrix points
 
 
-addComponentToMatrix : { a | id : String, position : Position, size : Size } -> Matrix -> Matrix
-addComponentToMatrix { id, position, size } matrix =
+addComponentToMatrix : Settings -> { a | id : ID, position : Position, size : Size } -> Matrix -> Matrix
+addComponentToMatrix settings { id, position, size } matrix =
     { id = id, size = size }
         |> componentToPoints
-        |> movePoints { position = position }
+        |> movePoints (normalizePosition settings { position = position })
         |> addPointsToMatrix matrix
 
 
-addComponentsToMatrix : Matrix -> List { a | id : String, position : Position, size : Size } -> Matrix
-addComponentsToMatrix matrix components =
-    List.foldl addComponentToMatrix matrix components
+addComponentsToMatrix : Settings -> Matrix -> List { a | id : ID, position : Position, size : Size } -> Matrix
+addComponentsToMatrix settings matrix components =
+    List.foldl (addComponentToMatrix settings) matrix components
 
 
 viewTest : Model -> Element Msg
 viewTest model =
-    {- TODO
-       This function should cover all empty areas automatically
-
-       Create a matrix 5 x 5
-
-       Array.repeat 5 (Array.repeat 5 "")
-
-       For each element in the dashboard, put them in this matrix
-
-           I have a component
-
-           - position ↓2 →3
-           - size ↓1 →2
-
-           conver the component in the List
-
-           ↓2 →3, ↓2 →4
-
-           total number of items = sizeX * sizeY
-
-           two lops, from ↓0 to ↓0 and from →0 to →1
-           and add these numbers to the position
-
-           add this list into the matrix
-    -}
     let
-        component1 =
-            { id = "1"
-            , position = { x = 1, y = 1 }
-            , size = { x = 3, y = 1 }
-            }
-
-        component2 =
-            { id = "2"
-            , position = { x = 0, y = 0 }
-            , size = { x = 1, y = 2 }
-            }
-
-        normalizedComponents =
-            List.map
-                (\component ->
-                    let
-                        position =
-                            { x = component.position.x // sizeCell
-                            , y = component.position.y // sizeCell
-                            }
-                    in
-                    { component | position = position }
-                )
-                (List.filter (\component -> component.location == Dashboard) model.components)
-
         matrix =
-            addComponentsToMatrix matrixEmpty normalizedComponents
+            addComponentsToMatrix model.settings (matrixEmpty model.settings) model.components
     in
     column [ padding 30 ]
         [ column [ spacing 5 ] <|
@@ -162,24 +133,9 @@ viewTest model =
         ]
 
 
-sizeCell : Int
-sizeCell =
-    100
-
-
-npos : Int -> Int
-npos pos =
-    pos * sizeCell
-
-
-dimensionDefault : Size
-dimensionDefault =
-    Size 5 5
-
-
-borderWidthDefault : Int
-borderWidthDefault =
-    5
+norPos : Settings -> Int -> Int
+norPos settings pos =
+    pos * settings.sizeCell
 
 
 labelEmpty : String
@@ -273,13 +229,20 @@ viewContent model content =
                     [ text <| Debug.toString model.drag ]
 
 
-emptyComponent : Component
-emptyComponent =
+emptyComponent : Settings -> Component
+emptyComponent settings =
     { id = ""
-    , position = Position (npos 0) (npos 0)
+    , position = Position (norPos settings 0) (norPos settings 0)
     , size = Size 0 0
     , content = Empty
     , location = None
+    }
+
+
+type alias Settings =
+    { sizeCell : Int
+    , sizeDashboard : Size
+    , sizeBorder : Int
     }
 
 
@@ -291,34 +254,44 @@ type alias Model =
     , drag : Draggable.State String
     , dragStartPosition : Maybe Position
     , posix : Time.Posix
+
+    -- SETTINGS
+    , settings : Settings
     }
 
 
 init : flags -> ( Model, Cmd Msg )
 init _ =
+    let
+        settings =
+            { sizeCell = 100
+            , sizeDashboard = Size 5 5
+            , sizeBorder = 5
+            }
+    in
     ( { components =
-            [ { id = "Comp. 4", position = Position (npos 0) (npos 0), size = Size 2 1, content = ClockJapan, location = Menu }
-            , { id = "Comp. 3", position = Position (npos 0) (npos 0), size = Size 2 2, content = Clock, location = Menu }
-            , { id = "Comp. 1", position = Position (npos 0) (npos 0), size = Size 2 1, content = Star, location = Menu }
-            , { id = "Comp. 2", position = Position (npos 0) (npos 0), size = Size 2 1, content = DragState, location = Menu }
+            [ { id = "Comp. 4", position = Position (norPos settings 0) (norPos settings 0), size = Size 2 1, content = ClockJapan, location = Menu }
+            , { id = "Comp. 3", position = Position (norPos settings 0) (norPos settings 0), size = Size 2 2, content = Clock, location = Menu }
+            , { id = "Comp. 1", position = Position (norPos settings 0) (norPos settings 0), size = Size 2 1, content = Star, location = Menu }
+            , { id = "Comp. 2", position = Position (norPos settings 0) (norPos settings 0), size = Size 2 1, content = DragState, location = Menu }
 
             --
             -- DAHSBOARD
             --
-            , { id = "Component 1", position = Position (npos 0) (npos 0), size = Size 1 2, content = Clock, location = Dashboard }
-            , { id = "Component 2", position = Position (npos 1) (npos 0), size = Size 1 1, content = Star, location = Dashboard }
-            , { id = "Component 3", position = Position (npos 2) (npos 0), size = Size 3 1, content = DragState, location = Dashboard }
+            , { id = "Component 1", position = Position (norPos settings 0) (norPos settings 0), size = Size 1 2, content = Clock, location = Dashboard }
+            , { id = "Component 2", position = Position (norPos settings 1) (norPos settings 0), size = Size 1 1, content = Star, location = Dashboard }
+            , { id = "Component 3", position = Position (norPos settings 2) (norPos settings 0), size = Size 3 1, content = DragState, location = Dashboard }
 
-            --, { id = "Component 4", position = Position (npos 1) (npos 1), size = Size 2 2, content = Empty, location = Dashboard }
-            , { id = "Component 5", position = Position (npos 0) (npos 2), size = Size 1 1, content = ClockJapan, location = Dashboard }
+            --, { id = "Component 4", position = Position (norPos settings 1) (norPos settings 1), size = Size 2 2, content = Empty, location = Dashboard }
+            , { id = "Component 5", position = Position (norPos settings 0) (norPos settings 2), size = Size 1 1, content = ClockJapan, location = Dashboard }
 
-            --, { id = "Component 6", position = Position (npos 3) (npos 1), size = Size 1 2, content = Empty, location = Dashboard }
-            , { id = "Component 7", position = Position (npos 4) (npos 1), size = Size 1 1, content = Empty, location = Dashboard }
-            , { id = "Component 8", position = Position (npos 4) (npos 2), size = Size 1 1, content = Empty, location = Dashboard }
+            --, { id = "Component 6", position = Position (norPos settings 3) (norPos settings 1), size = Size 1 2, content = Empty, location = Dashboard }
+            , { id = "Component 7", position = Position (norPos settings 4) (norPos settings 1), size = Size 1 1, content = Empty, location = Dashboard }
+            , { id = "Component 8", position = Position (norPos settings 4) (norPos settings 2), size = Size 1 1, content = Empty, location = Dashboard }
 
-            --, { id = "Component 9", position = Position (npos 0) (npos 3), size = Size 5 1, content = Empty, location = Dashboard }
-            , { id = "Component 10", position = Position (npos 0) (npos 4), size = Size 4 1, content = Empty, location = Dashboard }
-            , { id = "Component 11", position = Position (npos 4) (npos 4), size = Size 1 1, content = Empty, location = Dashboard }
+            --, { id = "Component 9", position = Position (norPos settings 0) (norPos settings 3), size = Size 5 1, content = Empty, location = Dashboard }
+            , { id = "Component 10", position = Position (norPos settings 0) (norPos settings 4), size = Size 4 1, content = Empty, location = Dashboard }
+            , { id = "Component 11", position = Position (norPos settings 4) (norPos settings 4), size = Size 1 1, content = Empty, location = Dashboard }
             ]
       , drag = Draggable.init
       , draggedComponent = Nothing
@@ -326,6 +299,9 @@ init _ =
       , idComponentWithMouseOver = Nothing
       , dragStartPosition = Nothing
       , posix = Time.millisToPosix 0
+
+      -- SETTINGS
+      , settings = settings
       }
     , Cmd.none
     )
@@ -372,50 +348,25 @@ idToPosition label id =
 
 componentsForEmpyAreas : Model -> List Component
 componentsForEmpyAreas model =
+    let
+        settings =
+            model.settings
+    in
     {- TODO
-       This function should cover all empty areas automatically
-
-       Create a matrix 5 x 5
-
-       Array.repeat 5 (Array.repeat 5 "")
-
-       For each element in the dashboard, put them in this matrix
-
-           I have a component
-
-           - position ↓2 →3
-           - size ↓1 →2
-
-           conver the component in the List
-
-           ↓2 →3, ↓2 →4
-
-           total number of items = sizeX * sizeY
-
-           two lops, from ↓0 to ↓0 and from →0 to →1
-           and add these numbers to the position
-
-           add this list into the matrix
-
-
-
-
-
-
-
+       This function should cover all empty areas automatically (see Matrix)
     -}
-    [ { id = positionToId labelEmpty <| Position (npos 1) (npos 1), position = Position (npos 1) (npos 1), size = Size 1 1, content = Empty, location = None }
-    , { id = positionToId labelEmpty <| Position (npos 2) (npos 1), position = Position (npos 2) (npos 1), size = Size 1 1, content = Empty, location = None }
-    , { id = positionToId labelEmpty <| Position (npos 3) (npos 1), position = Position (npos 3) (npos 1), size = Size 1 1, content = Empty, location = None }
-    , { id = positionToId labelEmpty <| Position (npos 1) (npos 2), position = Position (npos 1) (npos 2), size = Size 1 1, content = Empty, location = None }
-    , { id = positionToId labelEmpty <| Position (npos 2) (npos 2), position = Position (npos 2) (npos 2), size = Size 1 1, content = Empty, location = None }
-    , { id = positionToId labelEmpty <| Position (npos 3) (npos 2), position = Position (npos 3) (npos 2), size = Size 1 1, content = Empty, location = None }
-    , { id = positionToId labelEmpty <| Position (npos 0) (npos 3), position = Position (npos 0) (npos 3), size = Size 1 1, content = Empty, location = None }
-    , { id = positionToId labelEmpty <| Position (npos 1) (npos 3), position = Position (npos 1) (npos 3), size = Size 1 1, content = Empty, location = None }
-    , { id = positionToId labelEmpty <| Position (npos 2) (npos 3), position = Position (npos 2) (npos 3), size = Size 1 1, content = Empty, location = None }
-    , { id = positionToId labelEmpty <| Position (npos 3) (npos 3), position = Position (npos 3) (npos 3), size = Size 1 1, content = Empty, location = None }
+    [ { id = positionToId labelEmpty <| Position (norPos settings 1) (norPos settings 1), position = Position (norPos settings 1) (norPos settings 1), size = Size 1 1, content = Empty, location = None }
+    , { id = positionToId labelEmpty <| Position (norPos settings 2) (norPos settings 1), position = Position (norPos settings 2) (norPos settings 1), size = Size 1 1, content = Empty, location = None }
+    , { id = positionToId labelEmpty <| Position (norPos settings 3) (norPos settings 1), position = Position (norPos settings 3) (norPos settings 1), size = Size 1 1, content = Empty, location = None }
+    , { id = positionToId labelEmpty <| Position (norPos settings 1) (norPos settings 2), position = Position (norPos settings 1) (norPos settings 2), size = Size 1 1, content = Empty, location = None }
+    , { id = positionToId labelEmpty <| Position (norPos settings 2) (norPos settings 2), position = Position (norPos settings 2) (norPos settings 2), size = Size 1 1, content = Empty, location = None }
+    , { id = positionToId labelEmpty <| Position (norPos settings 3) (norPos settings 2), position = Position (norPos settings 3) (norPos settings 2), size = Size 1 1, content = Empty, location = None }
+    , { id = positionToId labelEmpty <| Position (norPos settings 0) (norPos settings 3), position = Position (norPos settings 0) (norPos settings 3), size = Size 1 1, content = Empty, location = None }
+    , { id = positionToId labelEmpty <| Position (norPos settings 1) (norPos settings 3), position = Position (norPos settings 1) (norPos settings 3), size = Size 1 1, content = Empty, location = None }
+    , { id = positionToId labelEmpty <| Position (norPos settings 2) (norPos settings 3), position = Position (norPos settings 2) (norPos settings 3), size = Size 1 1, content = Empty, location = None }
+    , { id = positionToId labelEmpty <| Position (norPos settings 3) (norPos settings 3), position = Position (norPos settings 3) (norPos settings 3), size = Size 1 1, content = Empty, location = None }
 
-    --, { id = positionToId labelEmpty <| Position (npos 4) (npos 3), position = Position (npos 4) (npos 3), size = Size 1 1, content = Nothing, location = None }
+    --, { id = positionToId labelEmpty <| Position (norPos settings 4) (norPos settings 3), position = Position (norPos settings 4) (norPos settings 3), size = Size 1 1, content = Nothing, location = None }
     ]
 
 
@@ -490,7 +441,7 @@ update msg model =
         OnDragStart id ->
             let
                 component =
-                    getComponent model.components id
+                    getComponent model.settings model.components id
             in
             ( { model
                 | draggedComponent = Just component
@@ -509,7 +460,7 @@ update msg model =
                             ""
 
                 xxx =
-                    getComponent model.components idDraggedComponent
+                    getComponent model.settings model.components idDraggedComponent
 
                 components1 =
                     model.components
@@ -584,8 +535,8 @@ isComponentDragging model id =
             False
 
 
-getComponent : List Component -> ID -> Component
-getComponent components id =
+getComponent : Settings -> List Component -> ID -> Component
+getComponent settings components id =
     let
         temp =
             List.head (List.filter (\component_ -> component_.id == id) components)
@@ -595,24 +546,28 @@ getComponent components id =
             component_
 
         Nothing ->
-            emptyComponent
+            emptyComponent settings
 
 
 getOverlay : Model -> Maybe Component
 getOverlay model =
+    let
+        settings =
+            model.settings
+    in
     {- TODO
        This function should detect all available positions based on dragged item.
     -}
     if isDragging model then
         let
             component =
-                getComponent model.components <| .id <| Maybe.withDefault emptyComponent model.draggedComponent
+                getComponent model.settings model.components <| .id <| Maybe.withDefault (emptyComponent model.settings) model.draggedComponent
 
             id x y =
-                Just (positionToId labelEmpty (Position (npos x) (npos y)))
+                Just (positionToId labelEmpty (Position (norPos settings x) (norPos settings y)))
 
             empty x y dx dy =
-                Just { id = "Overlay", position = Position (npos x) (npos y), size = Size dx dy, content = Empty, location = None }
+                Just { id = "Overlay", position = Position (norPos settings x) (norPos settings y), size = Size dx dy, content = Empty, location = None }
         in
         if component.size == Size 2 1 then
             if model.idComponentWithMouseOver == id 1 1 then
@@ -697,11 +652,11 @@ getOverlay model =
 -}
 
 
-attrsSize : Component -> List (Attribute Msg)
-attrsSize component =
-    [ width <| px <| component.size.x * sizeCell
-    , height <| px <| component.size.y * sizeCell
-    , Border.width borderWidthDefault
+attrsSize : Settings -> Component -> List (Attribute Msg)
+attrsSize settings component =
+    [ width <| px <| component.size.x * settings.sizeCell
+    , height <| px <| component.size.y * settings.sizeCell
+    , Border.width settings.sizeBorder
     ]
 
 
@@ -722,15 +677,18 @@ attrsMouseInteraction component =
 viewComponentInMenu : Model -> ID -> Element Msg
 viewComponentInMenu model id =
     let
+        settings =
+            model.settings
+
         component =
-            getComponent model.components id
+            getComponent model.settings model.components id
 
         isThisDragging_ =
             isComponentDragging model id
     in
     el
-        [ width <| px <| component.size.x * sizeCell
-        , height <| px <| component.size.y * sizeCell
+        [ width <| px <| component.size.x * settings.sizeCell
+        , height <| px <| component.size.y * settings.sizeCell
         , Border.width 0
         , htmlAttribute <| Html.Attributes.style "cursor" "grab"
         , htmlAttribute <| Html.Attributes.style "transition" "transform 0.05s, opacity 0.3s ease"
@@ -787,7 +745,7 @@ viewComponentInDashboard model component =
     in
     inFront <|
         el
-            (attrsSize component
+            (attrsSize model.settings component
                 ++ attrsPosition component
                 ++ attrsMouseInteraction component
                 ++ [ Border.color <| rgb 0.9 0.9 0.9
@@ -868,7 +826,7 @@ viewComponentAsEmptyArea model component =
     -}
     inFront <|
         el
-            (attrsSize component
+            (attrsSize model.settings component
                 ++ attrsPosition component
                 ++ attrsMouseInteraction component
                 ++ [ Border.color <|
@@ -890,7 +848,7 @@ viewComponentAsOverlay model component =
     -}
     inFront <|
         el
-            (attrsSize component
+            (attrsSize model.settings component
                 ++ attrsPosition component
                 ++ [ Border.color <| rgb 0.4 0.4 0.4
                    , Border.dashed
@@ -923,6 +881,10 @@ isDragging model =
 
 view : Model -> Html Msg
 view model =
+    let
+        settings =
+            model.settings
+    in
     layout
         []
     <|
@@ -960,6 +922,13 @@ view model =
 
               else
                 none
+            , column []
+                [ text "Settings"
+                , text """            { sizeCell = 100
+                        , sizeDashboard = Size 5 5
+                        , sizeBorder = 5
+                        }"""
+                ]
             , row
                 []
                 [ {-
@@ -970,9 +939,9 @@ view model =
                      ██      ██ ███████ ██   ████  ██████
                   -}
                   column
-                    [ padding <| borderWidthDefault * 2
+                    [ padding <| settings.sizeBorder * 2
                     , alignTop
-                    , spacing <| borderWidthDefault * 2
+                    , spacing <| settings.sizeBorder * 2
                     , htmlAttribute <| Html.Attributes.style "z-index" "1"
                     , Background.color <| rgb 0.8 1 0.8
                     , inFront <|
@@ -1000,14 +969,14 @@ view model =
                    ██████  ██   ██ ███████ ██   ██ ██████   ██████  ██   ██ ██   ██ ██████
                 -}
                 , el
-                    [ padding borderWidthDefault
+                    [ padding settings.sizeBorder
                     , alignTop
                     , Background.color <| rgb 0.9 0.9 0.9
                     ]
                   <|
                     column
-                        ([ width <| px <| dimensionDefault.x * sizeCell
-                         , height <| px <| dimensionDefault.y * sizeCell
+                        ([ width <| px <| settings.sizeDashboard.x * settings.sizeCell
+                         , height <| px <| settings.sizeDashboard.y * settings.sizeCell
                          , alignTop
                          ]
                             ++ List.map (\component -> viewComponentInDashboard model component) (List.filter (\c -> c.location == Dashboard) model.components)

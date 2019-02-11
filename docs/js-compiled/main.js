@@ -4408,7 +4408,6 @@ var author$project$Main$Size = F2(
 		return {x: x, y: y};
 	});
 var author$project$Main$Star = {$: 'Star'};
-var author$project$Main$sizeCell = 100;
 var elm$core$Basics$EQ = {$: 'EQ'};
 var elm$core$Basics$GT = {$: 'GT'};
 var elm$core$Basics$LT = {$: 'LT'};
@@ -4490,9 +4489,10 @@ var elm$core$Array$toList = function (array) {
 	return A3(elm$core$Array$foldr, elm$core$List$cons, _List_Nil, array);
 };
 var elm$core$Basics$mul = _Basics_mul;
-var author$project$Main$npos = function (pos) {
-	return pos * author$project$Main$sizeCell;
-};
+var author$project$Main$norPos = F2(
+	function (settings, pos) {
+		return pos * settings.sizeCell;
+	});
 var elm$core$Maybe$Nothing = {$: 'Nothing'};
 var elm$core$Basics$False = {$: 'False'};
 var elm$core$Basics$True = {$: 'True'};
@@ -4902,6 +4902,11 @@ var zaboco$elm_draggable$Draggable$State = function (a) {
 var zaboco$elm_draggable$Internal$NotDragging = {$: 'NotDragging'};
 var zaboco$elm_draggable$Draggable$init = zaboco$elm_draggable$Draggable$State(zaboco$elm_draggable$Internal$NotDragging);
 var author$project$Main$init = function (_n0) {
+	var settings = {
+		sizeBorder: 5,
+		sizeCell: 100,
+		sizeDashboard: A2(author$project$Main$Size, 5, 5)
+	};
 	return _Utils_Tuple2(
 		{
 			components: _List_fromArray(
@@ -4912,8 +4917,8 @@ var author$project$Main$init = function (_n0) {
 					location: author$project$Main$Menu,
 					position: A2(
 						author$project$Main$Position,
-						author$project$Main$npos(0),
-						author$project$Main$npos(0)),
+						A2(author$project$Main$norPos, settings, 0),
+						A2(author$project$Main$norPos, settings, 0)),
 					size: A2(author$project$Main$Size, 2, 1)
 				},
 					{
@@ -4922,8 +4927,8 @@ var author$project$Main$init = function (_n0) {
 					location: author$project$Main$Menu,
 					position: A2(
 						author$project$Main$Position,
-						author$project$Main$npos(0),
-						author$project$Main$npos(0)),
+						A2(author$project$Main$norPos, settings, 0),
+						A2(author$project$Main$norPos, settings, 0)),
 					size: A2(author$project$Main$Size, 2, 2)
 				},
 					{
@@ -4932,8 +4937,8 @@ var author$project$Main$init = function (_n0) {
 					location: author$project$Main$Menu,
 					position: A2(
 						author$project$Main$Position,
-						author$project$Main$npos(0),
-						author$project$Main$npos(0)),
+						A2(author$project$Main$norPos, settings, 0),
+						A2(author$project$Main$norPos, settings, 0)),
 					size: A2(author$project$Main$Size, 2, 1)
 				},
 					{
@@ -4942,8 +4947,8 @@ var author$project$Main$init = function (_n0) {
 					location: author$project$Main$Menu,
 					position: A2(
 						author$project$Main$Position,
-						author$project$Main$npos(0),
-						author$project$Main$npos(0)),
+						A2(author$project$Main$norPos, settings, 0),
+						A2(author$project$Main$norPos, settings, 0)),
 					size: A2(author$project$Main$Size, 2, 1)
 				},
 					{
@@ -4952,8 +4957,8 @@ var author$project$Main$init = function (_n0) {
 					location: author$project$Main$Dashboard,
 					position: A2(
 						author$project$Main$Position,
-						author$project$Main$npos(0),
-						author$project$Main$npos(0)),
+						A2(author$project$Main$norPos, settings, 0),
+						A2(author$project$Main$norPos, settings, 0)),
 					size: A2(author$project$Main$Size, 1, 2)
 				},
 					{
@@ -4962,8 +4967,8 @@ var author$project$Main$init = function (_n0) {
 					location: author$project$Main$Dashboard,
 					position: A2(
 						author$project$Main$Position,
-						author$project$Main$npos(1),
-						author$project$Main$npos(0)),
+						A2(author$project$Main$norPos, settings, 1),
+						A2(author$project$Main$norPos, settings, 0)),
 					size: A2(author$project$Main$Size, 1, 1)
 				},
 					{
@@ -4972,8 +4977,8 @@ var author$project$Main$init = function (_n0) {
 					location: author$project$Main$Dashboard,
 					position: A2(
 						author$project$Main$Position,
-						author$project$Main$npos(2),
-						author$project$Main$npos(0)),
+						A2(author$project$Main$norPos, settings, 2),
+						A2(author$project$Main$norPos, settings, 0)),
 					size: A2(author$project$Main$Size, 3, 1)
 				},
 					{
@@ -4982,8 +4987,8 @@ var author$project$Main$init = function (_n0) {
 					location: author$project$Main$Dashboard,
 					position: A2(
 						author$project$Main$Position,
-						author$project$Main$npos(0),
-						author$project$Main$npos(2)),
+						A2(author$project$Main$norPos, settings, 0),
+						A2(author$project$Main$norPos, settings, 2)),
 					size: A2(author$project$Main$Size, 1, 1)
 				},
 					{
@@ -4992,8 +4997,8 @@ var author$project$Main$init = function (_n0) {
 					location: author$project$Main$Dashboard,
 					position: A2(
 						author$project$Main$Position,
-						author$project$Main$npos(4),
-						author$project$Main$npos(1)),
+						A2(author$project$Main$norPos, settings, 4),
+						A2(author$project$Main$norPos, settings, 1)),
 					size: A2(author$project$Main$Size, 1, 1)
 				},
 					{
@@ -5002,8 +5007,8 @@ var author$project$Main$init = function (_n0) {
 					location: author$project$Main$Dashboard,
 					position: A2(
 						author$project$Main$Position,
-						author$project$Main$npos(4),
-						author$project$Main$npos(2)),
+						A2(author$project$Main$norPos, settings, 4),
+						A2(author$project$Main$norPos, settings, 2)),
 					size: A2(author$project$Main$Size, 1, 1)
 				},
 					{
@@ -5012,8 +5017,8 @@ var author$project$Main$init = function (_n0) {
 					location: author$project$Main$Dashboard,
 					position: A2(
 						author$project$Main$Position,
-						author$project$Main$npos(0),
-						author$project$Main$npos(4)),
+						A2(author$project$Main$norPos, settings, 0),
+						A2(author$project$Main$norPos, settings, 4)),
 					size: A2(author$project$Main$Size, 4, 1)
 				},
 					{
@@ -5022,8 +5027,8 @@ var author$project$Main$init = function (_n0) {
 					location: author$project$Main$Dashboard,
 					position: A2(
 						author$project$Main$Position,
-						author$project$Main$npos(4),
-						author$project$Main$npos(4)),
+						A2(author$project$Main$norPos, settings, 4),
+						A2(author$project$Main$norPos, settings, 4)),
 					size: A2(author$project$Main$Size, 1, 1)
 				}
 				]),
@@ -5032,7 +5037,8 @@ var author$project$Main$init = function (_n0) {
 			draggedComponent: elm$core$Maybe$Nothing,
 			idComponentWithMouseOver: elm$core$Maybe$Nothing,
 			isMouseUp: '',
-			posix: elm$time$Time$millisToPosix(0)
+			posix: elm$time$Time$millisToPosix(0),
+			settings: settings
 		},
 		elm$core$Platform$Cmd$none);
 };
@@ -6100,15 +6106,17 @@ var author$project$Main$dragConfig = zaboco$elm_draggable$Draggable$customConfig
 			zaboco$elm_draggable$Draggable$Events$onMouseDown(author$project$Main$OnMouseDown)
 		]));
 var author$project$Main$None = {$: 'None'};
-var author$project$Main$emptyComponent = {
-	content: author$project$Main$Empty,
-	id: '',
-	location: author$project$Main$None,
-	position: A2(
-		author$project$Main$Position,
-		author$project$Main$npos(0),
-		author$project$Main$npos(0)),
-	size: A2(author$project$Main$Size, 0, 0)
+var author$project$Main$emptyComponent = function (settings) {
+	return {
+		content: author$project$Main$Empty,
+		id: '',
+		location: author$project$Main$None,
+		position: A2(
+			author$project$Main$Position,
+			A2(author$project$Main$norPos, settings, 0),
+			A2(author$project$Main$norPos, settings, 0)),
+		size: A2(author$project$Main$Size, 0, 0)
+	};
 };
 var elm$core$List$filter = F2(
 	function (isGood, list) {
@@ -6130,8 +6138,8 @@ var elm$core$List$head = function (list) {
 		return elm$core$Maybe$Nothing;
 	}
 };
-var author$project$Main$getComponent = F2(
-	function (components, id) {
+var author$project$Main$getComponent = F3(
+	function (settings, components, id) {
 		var temp = elm$core$List$head(
 			A2(
 				elm$core$List$filter,
@@ -6143,7 +6151,7 @@ var author$project$Main$getComponent = F2(
 			var component_ = temp.a;
 			return component_;
 		} else {
-			return author$project$Main$emptyComponent;
+			return author$project$Main$emptyComponent(settings);
 		}
 	});
 var author$project$Main$isDragging = function (model) {
@@ -6171,6 +6179,7 @@ var elm$core$Maybe$withDefault = F2(
 		}
 	});
 var author$project$Main$getOverlay = function (model) {
+	var settings = model.settings;
 	if (author$project$Main$isDragging(model)) {
 		var id = F2(
 			function (x, y) {
@@ -6180,8 +6189,8 @@ var author$project$Main$getOverlay = function (model) {
 						author$project$Main$labelEmpty,
 						A2(
 							author$project$Main$Position,
-							author$project$Main$npos(x),
-							author$project$Main$npos(y))));
+							A2(author$project$Main$norPos, settings, x),
+							A2(author$project$Main$norPos, settings, y))));
 			});
 		var empty = F4(
 			function (x, y, dx, dy) {
@@ -6192,15 +6201,19 @@ var author$project$Main$getOverlay = function (model) {
 						location: author$project$Main$None,
 						position: A2(
 							author$project$Main$Position,
-							author$project$Main$npos(x),
-							author$project$Main$npos(y)),
+							A2(author$project$Main$norPos, settings, x),
+							A2(author$project$Main$norPos, settings, y)),
 						size: A2(author$project$Main$Size, dx, dy)
 					});
 			});
-		var component = A2(
+		var component = A3(
 			author$project$Main$getComponent,
+			model.settings,
 			model.components,
-			A2(elm$core$Maybe$withDefault, author$project$Main$emptyComponent, model.draggedComponent).id);
+			A2(
+				elm$core$Maybe$withDefault,
+				author$project$Main$emptyComponent(model.settings),
+				model.draggedComponent).id);
 		return _Utils_eq(
 			component.size,
 			A2(author$project$Main$Size, 2, 1)) ? (_Utils_eq(
@@ -6435,7 +6448,7 @@ var author$project$Main$update = F2(
 					elm$core$Platform$Cmd$none);
 			case 'OnDragStart':
 				var id = msg.a;
-				var component = A2(author$project$Main$getComponent, model.components, id);
+				var component = A3(author$project$Main$getComponent, model.settings, model.components, id);
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
@@ -6453,7 +6466,7 @@ var author$project$Main$update = F2(
 						return '';
 					}
 				}();
-				var xxx = A2(author$project$Main$getComponent, model.components, idDraggedComponent);
+				var xxx = A3(author$project$Main$getComponent, model.settings, model.components, idDraggedComponent);
 				var components1 = model.components;
 				var components2 = function () {
 					var _n4 = author$project$Main$getOverlay(model);
@@ -6505,8 +6518,8 @@ var author$project$Main$update = F2(
 				return A3(zaboco$elm_draggable$Draggable$update, author$project$Main$dragConfig, dragMsg, model);
 		}
 	});
-var author$project$Main$borderWidthDefault = 5;
 var author$project$Main$componentsForEmpyAreas = function (model) {
+	var settings = model.settings;
 	return _List_fromArray(
 		[
 			{
@@ -6516,13 +6529,13 @@ var author$project$Main$componentsForEmpyAreas = function (model) {
 				author$project$Main$labelEmpty,
 				A2(
 					author$project$Main$Position,
-					author$project$Main$npos(1),
-					author$project$Main$npos(1))),
+					A2(author$project$Main$norPos, settings, 1),
+					A2(author$project$Main$norPos, settings, 1))),
 			location: author$project$Main$None,
 			position: A2(
 				author$project$Main$Position,
-				author$project$Main$npos(1),
-				author$project$Main$npos(1)),
+				A2(author$project$Main$norPos, settings, 1),
+				A2(author$project$Main$norPos, settings, 1)),
 			size: A2(author$project$Main$Size, 1, 1)
 		},
 			{
@@ -6532,13 +6545,13 @@ var author$project$Main$componentsForEmpyAreas = function (model) {
 				author$project$Main$labelEmpty,
 				A2(
 					author$project$Main$Position,
-					author$project$Main$npos(2),
-					author$project$Main$npos(1))),
+					A2(author$project$Main$norPos, settings, 2),
+					A2(author$project$Main$norPos, settings, 1))),
 			location: author$project$Main$None,
 			position: A2(
 				author$project$Main$Position,
-				author$project$Main$npos(2),
-				author$project$Main$npos(1)),
+				A2(author$project$Main$norPos, settings, 2),
+				A2(author$project$Main$norPos, settings, 1)),
 			size: A2(author$project$Main$Size, 1, 1)
 		},
 			{
@@ -6548,13 +6561,13 @@ var author$project$Main$componentsForEmpyAreas = function (model) {
 				author$project$Main$labelEmpty,
 				A2(
 					author$project$Main$Position,
-					author$project$Main$npos(3),
-					author$project$Main$npos(1))),
+					A2(author$project$Main$norPos, settings, 3),
+					A2(author$project$Main$norPos, settings, 1))),
 			location: author$project$Main$None,
 			position: A2(
 				author$project$Main$Position,
-				author$project$Main$npos(3),
-				author$project$Main$npos(1)),
+				A2(author$project$Main$norPos, settings, 3),
+				A2(author$project$Main$norPos, settings, 1)),
 			size: A2(author$project$Main$Size, 1, 1)
 		},
 			{
@@ -6564,13 +6577,13 @@ var author$project$Main$componentsForEmpyAreas = function (model) {
 				author$project$Main$labelEmpty,
 				A2(
 					author$project$Main$Position,
-					author$project$Main$npos(1),
-					author$project$Main$npos(2))),
+					A2(author$project$Main$norPos, settings, 1),
+					A2(author$project$Main$norPos, settings, 2))),
 			location: author$project$Main$None,
 			position: A2(
 				author$project$Main$Position,
-				author$project$Main$npos(1),
-				author$project$Main$npos(2)),
+				A2(author$project$Main$norPos, settings, 1),
+				A2(author$project$Main$norPos, settings, 2)),
 			size: A2(author$project$Main$Size, 1, 1)
 		},
 			{
@@ -6580,13 +6593,13 @@ var author$project$Main$componentsForEmpyAreas = function (model) {
 				author$project$Main$labelEmpty,
 				A2(
 					author$project$Main$Position,
-					author$project$Main$npos(2),
-					author$project$Main$npos(2))),
+					A2(author$project$Main$norPos, settings, 2),
+					A2(author$project$Main$norPos, settings, 2))),
 			location: author$project$Main$None,
 			position: A2(
 				author$project$Main$Position,
-				author$project$Main$npos(2),
-				author$project$Main$npos(2)),
+				A2(author$project$Main$norPos, settings, 2),
+				A2(author$project$Main$norPos, settings, 2)),
 			size: A2(author$project$Main$Size, 1, 1)
 		},
 			{
@@ -6596,13 +6609,13 @@ var author$project$Main$componentsForEmpyAreas = function (model) {
 				author$project$Main$labelEmpty,
 				A2(
 					author$project$Main$Position,
-					author$project$Main$npos(3),
-					author$project$Main$npos(2))),
+					A2(author$project$Main$norPos, settings, 3),
+					A2(author$project$Main$norPos, settings, 2))),
 			location: author$project$Main$None,
 			position: A2(
 				author$project$Main$Position,
-				author$project$Main$npos(3),
-				author$project$Main$npos(2)),
+				A2(author$project$Main$norPos, settings, 3),
+				A2(author$project$Main$norPos, settings, 2)),
 			size: A2(author$project$Main$Size, 1, 1)
 		},
 			{
@@ -6612,13 +6625,13 @@ var author$project$Main$componentsForEmpyAreas = function (model) {
 				author$project$Main$labelEmpty,
 				A2(
 					author$project$Main$Position,
-					author$project$Main$npos(0),
-					author$project$Main$npos(3))),
+					A2(author$project$Main$norPos, settings, 0),
+					A2(author$project$Main$norPos, settings, 3))),
 			location: author$project$Main$None,
 			position: A2(
 				author$project$Main$Position,
-				author$project$Main$npos(0),
-				author$project$Main$npos(3)),
+				A2(author$project$Main$norPos, settings, 0),
+				A2(author$project$Main$norPos, settings, 3)),
 			size: A2(author$project$Main$Size, 1, 1)
 		},
 			{
@@ -6628,13 +6641,13 @@ var author$project$Main$componentsForEmpyAreas = function (model) {
 				author$project$Main$labelEmpty,
 				A2(
 					author$project$Main$Position,
-					author$project$Main$npos(1),
-					author$project$Main$npos(3))),
+					A2(author$project$Main$norPos, settings, 1),
+					A2(author$project$Main$norPos, settings, 3))),
 			location: author$project$Main$None,
 			position: A2(
 				author$project$Main$Position,
-				author$project$Main$npos(1),
-				author$project$Main$npos(3)),
+				A2(author$project$Main$norPos, settings, 1),
+				A2(author$project$Main$norPos, settings, 3)),
 			size: A2(author$project$Main$Size, 1, 1)
 		},
 			{
@@ -6644,13 +6657,13 @@ var author$project$Main$componentsForEmpyAreas = function (model) {
 				author$project$Main$labelEmpty,
 				A2(
 					author$project$Main$Position,
-					author$project$Main$npos(2),
-					author$project$Main$npos(3))),
+					A2(author$project$Main$norPos, settings, 2),
+					A2(author$project$Main$norPos, settings, 3))),
 			location: author$project$Main$None,
 			position: A2(
 				author$project$Main$Position,
-				author$project$Main$npos(2),
-				author$project$Main$npos(3)),
+				A2(author$project$Main$norPos, settings, 2),
+				A2(author$project$Main$norPos, settings, 3)),
 			size: A2(author$project$Main$Size, 1, 1)
 		},
 			{
@@ -6660,19 +6673,18 @@ var author$project$Main$componentsForEmpyAreas = function (model) {
 				author$project$Main$labelEmpty,
 				A2(
 					author$project$Main$Position,
-					author$project$Main$npos(3),
-					author$project$Main$npos(3))),
+					A2(author$project$Main$norPos, settings, 3),
+					A2(author$project$Main$norPos, settings, 3))),
 			location: author$project$Main$None,
 			position: A2(
 				author$project$Main$Position,
-				author$project$Main$npos(3),
-				author$project$Main$npos(3)),
+				A2(author$project$Main$norPos, settings, 3),
+				A2(author$project$Main$norPos, settings, 3)),
 			size: A2(author$project$Main$Size, 1, 1)
 		}
 		]);
 };
-var author$project$Main$debug = false;
-var author$project$Main$dimensionDefault = A2(author$project$Main$Size, 5, 5);
+var author$project$Main$debug = true;
 var author$project$Main$MouseEnterComponent = function (a) {
 	return {$: 'MouseEnterComponent', a: a};
 };
@@ -6791,16 +6803,17 @@ var mdgriffith$elm_ui$Element$Border$width = function (v) {
 			v,
 			v));
 };
-var author$project$Main$attrsSize = function (component) {
-	return _List_fromArray(
-		[
-			mdgriffith$elm_ui$Element$width(
-			mdgriffith$elm_ui$Element$px(component.size.x * author$project$Main$sizeCell)),
-			mdgriffith$elm_ui$Element$height(
-			mdgriffith$elm_ui$Element$px(component.size.y * author$project$Main$sizeCell)),
-			mdgriffith$elm_ui$Element$Border$width(author$project$Main$borderWidthDefault)
-		]);
-};
+var author$project$Main$attrsSize = F2(
+	function (settings, component) {
+		return _List_fromArray(
+			[
+				mdgriffith$elm_ui$Element$width(
+				mdgriffith$elm_ui$Element$px(component.size.x * settings.sizeCell)),
+				mdgriffith$elm_ui$Element$height(
+				mdgriffith$elm_ui$Element$px(component.size.y * settings.sizeCell)),
+				mdgriffith$elm_ui$Element$Border$width(settings.sizeBorder)
+			]);
+	});
 var mdgriffith$elm_ui$Internal$Model$Content = {$: 'Content'};
 var mdgriffith$elm_ui$Element$shrink = mdgriffith$elm_ui$Internal$Model$Content;
 var mdgriffith$elm_ui$Internal$Model$Unkeyed = function (a) {
@@ -11981,7 +11994,7 @@ var author$project$Main$viewComponentAsEmptyArea = F2(
 			A2(
 				mdgriffith$elm_ui$Element$el,
 				_Utils_ap(
-					author$project$Main$attrsSize(component),
+					A2(author$project$Main$attrsSize, model.settings, component),
 					_Utils_ap(
 						author$project$Main$attrsPosition(component),
 						_Utils_ap(
@@ -12013,7 +12026,7 @@ var author$project$Main$viewComponentAsOverlay = F2(
 			A2(
 				mdgriffith$elm_ui$Element$el,
 				_Utils_ap(
-					author$project$Main$attrsSize(component),
+					A2(author$project$Main$attrsSize, model.settings, component),
 					_Utils_ap(
 						author$project$Main$attrsPosition(component),
 						_List_fromArray(
@@ -12601,7 +12614,7 @@ var author$project$Main$viewComponentInDashboard = F2(
 			A2(
 				mdgriffith$elm_ui$Element$el,
 				_Utils_ap(
-					author$project$Main$attrsSize(component),
+					A2(author$project$Main$attrsSize, model.settings, component),
 					_Utils_ap(
 						author$project$Main$attrsPosition(component),
 						_Utils_ap(
@@ -12674,16 +12687,17 @@ var mdgriffith$elm_ui$Element$alpha = function (o) {
 };
 var author$project$Main$viewComponentInMenu = F2(
 	function (model, id) {
+		var settings = model.settings;
 		var isThisDragging_ = A2(author$project$Main$isComponentDragging, model, id);
-		var component = A2(author$project$Main$getComponent, model.components, id);
+		var component = A3(author$project$Main$getComponent, model.settings, model.components, id);
 		return A2(
 			mdgriffith$elm_ui$Element$el,
 			_List_fromArray(
 				[
 					mdgriffith$elm_ui$Element$width(
-					mdgriffith$elm_ui$Element$px(component.size.x * author$project$Main$sizeCell)),
+					mdgriffith$elm_ui$Element$px(component.size.x * settings.sizeCell)),
 					mdgriffith$elm_ui$Element$height(
-					mdgriffith$elm_ui$Element$px(component.size.y * author$project$Main$sizeCell)),
+					mdgriffith$elm_ui$Element$px(component.size.y * settings.sizeCell)),
 					mdgriffith$elm_ui$Element$Border$width(0),
 					mdgriffith$elm_ui$Element$htmlAttribute(
 					A2(elm$html$Html$Attributes$style, 'cursor', 'grab')),
@@ -12868,8 +12882,15 @@ var author$project$Main$movePoints = F2(
 			},
 			deco);
 	});
-var author$project$Main$addComponentToMatrix = F2(
-	function (_n0, matrix) {
+var author$project$Main$normalizePosition = F2(
+	function (settings, component) {
+		var position = {x: (component.position.x / settings.sizeCell) | 0, y: (component.position.y / settings.sizeCell) | 0};
+		return _Utils_update(
+			component,
+			{position: position});
+	});
+var author$project$Main$addComponentToMatrix = F3(
+	function (settings, _n0, matrix) {
 		var id = _n0.id;
 		var position = _n0.position;
 		var size = _n0.size;
@@ -12878,13 +12899,20 @@ var author$project$Main$addComponentToMatrix = F2(
 			matrix,
 			A2(
 				author$project$Main$movePoints,
-				{position: position},
+				A2(
+					author$project$Main$normalizePosition,
+					settings,
+					{position: position}),
 				author$project$Main$componentToPoints(
 					{id: id, size: size})));
 	});
-var author$project$Main$addComponentsToMatrix = F2(
-	function (matrix, components) {
-		return A3(elm$core$List$foldl, author$project$Main$addComponentToMatrix, matrix, components);
+var author$project$Main$addComponentsToMatrix = F3(
+	function (settings, matrix, components) {
+		return A3(
+			elm$core$List$foldl,
+			author$project$Main$addComponentToMatrix(settings),
+			matrix,
+			components);
 	});
 var elm$core$Array$repeat = F2(
 	function (n, e) {
@@ -12895,10 +12923,12 @@ var elm$core$Array$repeat = F2(
 				return e;
 			});
 	});
-var author$project$Main$matrixEmpty = A2(
-	elm$core$Array$repeat,
-	author$project$Main$dimensionDefault.x,
-	A2(elm$core$Array$repeat, author$project$Main$dimensionDefault.y, '  '));
+var author$project$Main$matrixEmpty = function (settings) {
+	return A2(
+		elm$core$Array$repeat,
+		settings.sizeDashboard.x,
+		A2(elm$core$Array$repeat, settings.sizeDashboard.y, ''));
+};
 var mdgriffith$elm_ui$Internal$Model$AsRow = {$: 'AsRow'};
 var mdgriffith$elm_ui$Internal$Model$asRow = mdgriffith$elm_ui$Internal$Model$AsRow;
 var mdgriffith$elm_ui$Element$row = F2(
@@ -12920,31 +12950,11 @@ var mdgriffith$elm_ui$Element$row = F2(
 			mdgriffith$elm_ui$Internal$Model$Unkeyed(children));
 	});
 var author$project$Main$viewTest = function (model) {
-	var normalizedComponents = A2(
-		elm$core$List$map,
-		function (component) {
-			var position = {x: (component.position.x / author$project$Main$sizeCell) | 0, y: (component.position.y / author$project$Main$sizeCell) | 0};
-			return _Utils_update(
-				component,
-				{position: position});
-		},
-		A2(
-			elm$core$List$filter,
-			function (component) {
-				return _Utils_eq(component.location, author$project$Main$Dashboard);
-			},
-			model.components));
-	var matrix = A2(author$project$Main$addComponentsToMatrix, author$project$Main$matrixEmpty, normalizedComponents);
-	var component2 = {
-		id: '2',
-		position: {x: 0, y: 0},
-		size: {x: 1, y: 2}
-	};
-	var component1 = {
-		id: '1',
-		position: {x: 1, y: 1},
-		size: {x: 3, y: 1}
-	};
+	var matrix = A3(
+		author$project$Main$addComponentsToMatrix,
+		model.settings,
+		author$project$Main$matrixEmpty(model.settings),
+		model.components);
 	return A2(
 		mdgriffith$elm_ui$Element$column,
 		_List_fromArray(
@@ -13307,6 +13317,7 @@ var mdgriffith$elm_ui$Element$paddingXY = F2(
 var mdgriffith$elm_ui$Element$scrollbarX = A2(mdgriffith$elm_ui$Internal$Model$Class, mdgriffith$elm_ui$Internal$Flag$overflow, mdgriffith$elm_ui$Internal$Style$classes.scrollbarsX);
 var mdgriffith$elm_ui$Element$scrollbarY = A2(mdgriffith$elm_ui$Internal$Model$Class, mdgriffith$elm_ui$Internal$Flag$overflow, mdgriffith$elm_ui$Internal$Style$classes.scrollbarsY);
 var author$project$Main$view = function (model) {
+	var settings = model.settings;
 	return A2(
 		mdgriffith$elm_ui$Element$layout,
 		_List_Nil,
@@ -13380,6 +13391,14 @@ var author$project$Main$view = function (model) {
 							})
 						])) : mdgriffith$elm_ui$Element$none,
 					A2(
+					mdgriffith$elm_ui$Element$column,
+					_List_Nil,
+					_List_fromArray(
+						[
+							mdgriffith$elm_ui$Element$text('Settings'),
+							mdgriffith$elm_ui$Element$text('            { sizeCell = 100\n                        , sizeDashboard = Size 5 5\n                        , sizeBorder = 5\n                        }')
+						])),
+					A2(
 					mdgriffith$elm_ui$Element$row,
 					_List_Nil,
 					_List_fromArray(
@@ -13388,9 +13407,9 @@ var author$project$Main$view = function (model) {
 							mdgriffith$elm_ui$Element$column,
 							_List_fromArray(
 								[
-									mdgriffith$elm_ui$Element$padding(author$project$Main$borderWidthDefault * 2),
+									mdgriffith$elm_ui$Element$padding(settings.sizeBorder * 2),
 									mdgriffith$elm_ui$Element$alignTop,
-									mdgriffith$elm_ui$Element$spacing(author$project$Main$borderWidthDefault * 2),
+									mdgriffith$elm_ui$Element$spacing(settings.sizeBorder * 2),
 									mdgriffith$elm_ui$Element$htmlAttribute(
 									A2(elm$html$Html$Attributes$style, 'z-index', '1')),
 									mdgriffith$elm_ui$Element$Background$color(
@@ -13424,7 +13443,7 @@ var author$project$Main$view = function (model) {
 							mdgriffith$elm_ui$Element$el,
 							_List_fromArray(
 								[
-									mdgriffith$elm_ui$Element$padding(author$project$Main$borderWidthDefault),
+									mdgriffith$elm_ui$Element$padding(settings.sizeBorder),
 									mdgriffith$elm_ui$Element$alignTop,
 									mdgriffith$elm_ui$Element$Background$color(
 									A3(mdgriffith$elm_ui$Element$rgb, 0.9, 0.9, 0.9))
@@ -13435,9 +13454,9 @@ var author$project$Main$view = function (model) {
 									_List_fromArray(
 										[
 											mdgriffith$elm_ui$Element$width(
-											mdgriffith$elm_ui$Element$px(author$project$Main$dimensionDefault.x * author$project$Main$sizeCell)),
+											mdgriffith$elm_ui$Element$px(settings.sizeDashboard.x * settings.sizeCell)),
 											mdgriffith$elm_ui$Element$height(
-											mdgriffith$elm_ui$Element$px(author$project$Main$dimensionDefault.y * author$project$Main$sizeCell)),
+											mdgriffith$elm_ui$Element$px(settings.sizeDashboard.y * settings.sizeCell)),
 											mdgriffith$elm_ui$Element$alignTop
 										]),
 									_Utils_ap(
